@@ -22,6 +22,28 @@ const InstanceCard = ({ instance, onCreateAlarm }) => (
         Create Alarm
       </button>
     </div>
+
+    {/* Pre-flight Checks */}
+    <div className="mt-4 border-t border-b py-4">
+      <div className="flex justify-center mb-3">
+        <h5 className="text-sm font-semibold">Pre-flight Checks</h5>
+      </div>
+      <div className="space-y-2">
+        <div className="flex justify-between items-center text-sm bg-gray-50 p-2 rounded">
+          <span className="text-gray-700">AWSCloudWatchIAMPolicy</span>
+          <span className="px-2 py-1 rounded-full text-xs bg-yellow-100 text-yellow-800">
+            Pending
+          </span>
+        </div>
+        <div className="flex justify-between items-center text-sm bg-gray-50 p-2 rounded">
+          <span className="text-gray-700">AWSSSMMangedInstance</span>
+          <span className="px-2 py-1 rounded-full text-xs bg-yellow-100 text-yellow-800">
+            Pending
+          </span>
+        </div>
+      </div>
+    </div>
+
     {/* Alarms */}
     <div className="mt-4">
       <div className="flex justify-end mb-2">
