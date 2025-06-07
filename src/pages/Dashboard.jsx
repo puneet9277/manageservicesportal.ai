@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Modal from '../components/modals/Modal';
 import AWSModal from '../components/modals/AWSModal';
+import ProfileModal from '../components/modals/ProfileModal';
 import Button from '../components/buttons/Button';
 
 const Dashboard = () => {
@@ -18,6 +19,7 @@ const Dashboard = () => {
   const [showContent, setShowContent] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const [showProfileModal, setShowProfileModal] = useState(false);
 
   // Mock user data - replace with actual data from your backend
   const userData = {
@@ -125,7 +127,7 @@ const Dashboard = () => {
   }, []);
 
   const handleProfile = () => {
-    navigate('/profile');
+    setShowProfileModal(true);
     setDropdownOpen(false);
   };
 
@@ -210,6 +212,13 @@ const Dashboard = () => {
 
       {/* Content */}
       <div className="relative min-h-screen flex flex-col">
+        {/* Profile Modal */}
+        <ProfileModal
+          isOpen={showProfileModal}
+          onClose={() => setShowProfileModal(false)}
+          userData={userData}
+        />
+
         {/* Header - Responsive Flex Layout */}
         <div className="bg-white bg-opacity-90 shadow-sm backdrop-blur-sm w-full relative z-[100]">
           <div className="flex items-center justify-between px-4 sm:px-8 py-4 relative">
