@@ -24,7 +24,9 @@ const InstanceCard = ({ instance, onCreateAlarm }) => (
     </div>
     {/* Alarms */}
     <div className="mt-4">
-      <h5 className="text-sm font-semibold mb-2">Alarms</h5>
+      <div className="flex justify-end mb-2">
+        <h5 className="text-sm font-semibold">Alarms</h5>
+      </div>
       <div className="space-y-2">
         {instance.alarms.map((alarm, index) => (
           <div

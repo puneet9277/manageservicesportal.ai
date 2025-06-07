@@ -16,7 +16,7 @@ const AWSInstancePage = () => {
           <div className="max-w-[1600px] mx-auto">
             <div className="bg-white bg-opacity-90 shadow-lg rounded-2xl p-8 mb-6">
               <h2 className="text-3xl font-bold text-center bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-8">
-                AWS Instance Manager
+                Customer Services
               </h2>
               <div className="grid grid-cols-1 gap-8">
                 {awsInstances.map((instance) => (
