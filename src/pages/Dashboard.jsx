@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Modal from './Modal';
-import AWSModal from './AWSModal';
+import Modal from '../components/modals/Modal';
+import AWSModal from '../components/modals/AWSModal';
+import Button from '../components/buttons/Button';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -15,6 +16,8 @@ const Dashboard = () => {
     totalActions: 0
   });
   const [showContent, setShowContent] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
   // Mock user data - replace with actual data from your backend
   const userData = {
@@ -95,11 +98,11 @@ const Dashboard = () => {
           return;
         }
 
-        setAnimatedStats(prev => ({
+        setAnimatedStats({
           loginCount: Math.round((userData.statistics.loginCount * currentStep) / steps),
           awsLoginCount: Math.round((userData.statistics.awsLoginCount * currentStep) / steps),
           totalActions: Math.round((userData.statistics.totalActions * currentStep) / steps)
-        }));
+        });
 
         currentStep++;
       }, interval);
@@ -107,6 +110,24 @@ const Dashboard = () => {
 
     setTimeout(startAnimation, 500);
   }, []);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const handleProfile = () => {
+    navigate('/profile');
+    setDropdownOpen(false);
+  };
 
   const formatDate = (date) => {
     return new Date(date).toLocaleString('en-US', {
@@ -118,10 +139,9 @@ const Dashboard = () => {
   };
 
   const handleLogout = () => {
-    // Add logout animation
     setShowContent(false);
+    setDropdownOpen(false);
     setTimeout(() => {
-      console.log("Logging out...");
       navigate('/login');
     }, 300);
   };
@@ -136,31 +156,6 @@ const Dashboard = () => {
         return 'bg-blue-50 border-l-4 border-blue-400';
     }
   };
-
-  const cloudProviders = [
-    {
-      name: 'Amazon Web Services',
-      description: 'Access your AWS cloud infrastructure and services',
-      icon: (
-        <svg className="w-12 h-12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M16.634 10.404c-.183.132-.396.198-.609.198-.213 0-.426-.066-.609-.198l-2.634-1.92-2.634 1.92c-.183.132-.396.198-.609.198-.213 0-.426-.066-.609-.198L6.296 8.484v3.036c0 .264-.132.528-.396.66L3.266 13.86v2.376l2.634-1.92c.183-.132.396-.198.609-.198.213 0 .426.066.609.198l2.634 1.92 2.634-1.92c.183-.132.396-.198.609-.198.213 0 .426.066.609.198l2.634 1.92v-2.376l-2.634-1.92c-.264-.132-.396-.396-.396-.66V8.484l-2.634 1.92zM12 2c5.514 0 10 4.486 10 10s-4.486 10-10 10S2 17.514 2 12 6.486 2 12 2z" fill="#FF9900"/>
-        </svg>
-      ),
-      path: '/aws-services'
-    },
-    {
-      name: 'Coming Soon',
-      description: 'Support for more cloud providers coming soon',
-      icon: (
-        <svg className="w-12 h-12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" stroke="#718096" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          <path d="M12 6v6l4 2" stroke="#718096" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
-      ),
-      path: '#',
-      disabled: true
-    }
-  ];
 
   const StatCircle = ({ value, maxValue, title, color, isLoading }) => (
     <div className="relative group">
@@ -215,33 +210,65 @@ const Dashboard = () => {
 
       {/* Content */}
       <div className="relative min-h-screen flex flex-col">
-        {/* Company Logo */}
-        <div className="absolute top-6 left-8 z-10 transform transition-transform duration-300 hover:scale-110">
-          <img
-            src="/workmates-logo.svg"
-            alt="Cloud Workmates"
-            className="h-16 w-auto filter drop-shadow-lg"
-          />
-        </div>
-
-        {/* Top Bar with Welcome */}
-        <div className="bg-white bg-opacity-90 shadow-sm backdrop-blur-sm w-full">
-          <div className="px-8 py-6 relative">
-            <h2 className="text-4xl font-bold text-center bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-              Welcome back, {userData.username}!
+        {/* Header - Responsive Flex Layout */}
+        <div className="bg-white bg-opacity-90 shadow-sm backdrop-blur-sm w-full relative z-[100]">
+          <div className="flex items-center justify-between px-4 sm:px-8 py-4 relative">
+            {/* Logo */}
+            <div className="flex-shrink-0 flex items-center">
+              <img
+                src="/workmates-logo.svg"
+                alt="Cloud Workmates"
+                className="h-10 w-auto filter drop-shadow-lg"
+              />
+            </div>
+            {/* Welcome Message */}
+            <h2 className="flex-1 text-center text-lg sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mx-2 truncate">
+              Customer Dashboard
             </h2>
+            {/* Dropdown */}
+            <div className="flex-shrink-0 ml-2 relative" ref={dropdownRef}>
+              <Button
+                onClick={() => setDropdownOpen((v) => !v)}
+                className="flex items-center px-3 py-2 rounded-md bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                aria-haspopup="true"
+                aria-expanded={dropdownOpen}
+              >
+                <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.121 17.804A13.937 13.937 0 0112 15c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <svg className="w-4 h-4 ml-1 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </Button>
+              {dropdownOpen && (
+                <div className="absolute right-0 top-full z-[9999] bg-white border border-gray-200 rounded-md shadow-lg animate-fadeIn min-w-[12rem] w-72 max-w-sm">
+                  <button
+                    onClick={handleProfile}
+                    className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-indigo-100 hover:text-indigo-700"
+                  >
+                    Profile
+                  </button>
+                  <button
+                    onClick={handleLogout}
+                    className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-red-100 hover:text-red-700"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
         {/* Main Content Container */}
-        <div className="flex-grow w-full px-8 py-6 relative z-10">
+        <div className="flex-grow w-full px-2 sm:px-4 md:px-8 py-2 sm:py-4 md:py-6 relative z-10">
           <div className="max-w-[1600px] mx-auto">
             {/* Usage Statistics */}
             <div className="bg-white bg-opacity-90 shadow-lg rounded-lg p-10 mb-6 transform transition-all duration-300 hover:shadow-xl">
               <h3 className="text-3xl font-bold text-gray-900 mb-10 text-center bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                 Usage Statistics
               </h3>
-              <div className="grid grid-cols-3 gap-12 justify-items-center">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 justify-items-center">
                 <StatCircle
                   value={animatedStats.loginCount}
                   maxValue={100}
@@ -267,7 +294,7 @@ const Dashboard = () => {
             </div>
 
             {/* Bottom Grid */}
-            <div className="grid grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {/* System Activity Log */}
               <div className="col-span-1">
                 <div className="bg-white bg-opacity-90 shadow-lg rounded-lg p-6 transform transition-all duration-300 hover:shadow-xl">
@@ -275,7 +302,7 @@ const Dashboard = () => {
                     <h3 className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                       System Activity Log
                     </h3>
-                    <button
+                    <Button
                       className="text-indigo-600 hover:text-indigo-700 text-sm font-medium flex items-center group"
                       onClick={() => setShowAllLogs(!showAllLogs)}
                     >
@@ -283,7 +310,7 @@ const Dashboard = () => {
                       <svg className="w-4 h-4 ml-1 transform transition-transform duration-200 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>
-                    </button>
+                    </Button>
                   </div>
                   <div className="space-y-4">
                     {userData.recentLogs.slice(0, 3).map((log, index) => (
@@ -311,7 +338,7 @@ const Dashboard = () => {
                     <h3 className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                       Recently Accessed AWS Accounts
                     </h3>
-                    <button
+                    <Button
                       className="text-indigo-600 hover:text-indigo-700 text-sm font-medium flex items-center group"
                       onClick={() => setShowAllAccounts(!showAllAccounts)}
                     >
@@ -319,7 +346,7 @@ const Dashboard = () => {
                       <svg className="w-4 h-4 ml-1 transform transition-transform duration-200 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>
-                    </button>
+                    </Button>
                   </div>
                   <div className="space-y-4">
                     {userData.recentAwsAccounts.slice(0, 2).map((account, index) => (
@@ -357,12 +384,12 @@ const Dashboard = () => {
                     AWS Customer Management
                   </h3>
                   <p className="text-sm text-gray-500 mb-4">Manage your AWS customer accounts</p>
-                  <button
+                  <Button
                     onClick={() => setShowAWSModal(true)}
                     className="w-full py-2 px-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-[1.02] flex items-center justify-center"
                   >
                     Manage Customer
-                  </button>
+                  </Button>
                 </div>
 
                 {/* Quick Actions */}
@@ -394,19 +421,6 @@ const Dashboard = () => {
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Logout Button - Fixed to bottom left */}
-        <div className="fixed bottom-8 left-8">
-          <button
-            onClick={handleLogout}
-            className="px-6 py-2 bg-gradient-to-r from-red-600 to-pink-600 text-white rounded-md hover:from-red-700 hover:to-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-300 transform hover:scale-105 flex items-center space-x-2 shadow-lg"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-            </svg>
-            <span>Logout</span>
-          </button>
         </div>
       </div>
 

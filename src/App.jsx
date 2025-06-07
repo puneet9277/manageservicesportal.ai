@@ -1,9 +1,9 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Login from './components/LoginForm';
-import Dashboard from './components/Dashboard';
-import AWSInstancePage from './components/AWSInstancePage';
-import CreateAlarmForm from './components/CreateAlarmForm';
-import AWSLearningDashboard from './components/AWSLearningDashboard';
+import Login from './pages/LoginForm';
+import Dashboard from './pages/Dashboard';
+import AWSInstancePage from './pages/AWSInstancePage';
+import CreateAlarmForm from './pages/CreateAlarmForm';
+import AWSLearningDashboard from './pages/AWSLearningDashboard';
 import './App.css'
 
 function App() {

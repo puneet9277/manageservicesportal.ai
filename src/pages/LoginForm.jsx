@@ -47,9 +47,9 @@ const LoginForm = () => {
   };
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex flex-col sm:flex-row">
       {/* Left side - Login Form */}
-      <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 relative overflow-hidden">
+      <div className="flex-1 flex items-center justify-center px-2 sm:px-4 md:px-8 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 relative overflow-hidden">
         {/* Animated background elements */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute -left-10 -top-10 w-40 h-40 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
@@ -59,7 +59,7 @@ const LoginForm = () => {
 
         <div className="max-w-md w-full space-y-8 relative">
           <div className={`transition-all duration-700 transform ${showWelcome ? 'translate-y-0 opacity-100' : '-translate-y-4 opacity-0'}`}>
-            <h2 className="mt-6 text-center text-4xl font-extrabold text-gray-900 tracking-tight">
+            <h2 className="mt-6 text-center text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight">
               Welcome Back
             </h2>
             <p className="mt-2 text-center text-sm text-gray-600">
