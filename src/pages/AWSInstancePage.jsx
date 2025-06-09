@@ -23,7 +23,9 @@ const AWSInstancePage = () => {
     // Calculate statistics
     const newStats = awsInstances.reduce((acc, instance) => {
       acc.total++;
-      acc[instance.status]++;
+      if (instance.status === 'running') acc.running++;
+      if (instance.status === 'stopped') acc.stopped++;
+      if (instance.status === 'pending') acc.pending++;
       return acc;
     }, { total: 0, running: 0, stopped: 0, pending: 0 });
     setStats(newStats);
@@ -43,10 +45,13 @@ const AWSInstancePage = () => {
     });
 
   const handleCreateAlarm = (instanceId) => {
-    setShowContent(false);
-    setTimeout(() => {
-      navigate(`/create-alarm/${instanceId}`);
-    }, 300);
+    const instance = awsInstances.find(inst => inst.instanceId === instanceId);
+    if (instance && instance.status === 'running') {
+      setShowContent(false);
+      setTimeout(() => {
+        navigate(`/create-alarm/${instanceId}`);
+      }, 300);
+    }
   };
 
   const StatCard = ({ title, value, color, icon }) => (

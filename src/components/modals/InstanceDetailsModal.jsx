@@ -3,6 +3,8 @@ import React from 'react';
 const InstanceDetailsModal = ({ isOpen, onClose, instance, onCreateAlarm }) => {
   if (!isOpen) return null;
 
+  const isRunning = instance.status.toLowerCase() === 'running';
+
   return (
     <div className="fixed inset-0 z-[1000] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
       <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
@@ -65,16 +67,27 @@ const InstanceDetailsModal = ({ isOpen, onClose, instance, onCreateAlarm }) => {
             </div>
           </div>
           <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-            <button
-              type="button"
-              className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-base font-medium text-white hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm"
-              onClick={() => {
-                onCreateAlarm(instance.instanceId);
-                onClose();
-              }}
-            >
-              Create Alarm
-            </button>
+            {isRunning ? (
+              <button
+                type="button"
+                className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-base font-medium text-white hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm"
+                onClick={() => {
+                  onCreateAlarm(instance.instanceId);
+                  onClose();
+                }}
+              >
+                Create Alarm
+              </button>
+            ) : (
+              <div className="w-full sm:w-auto mb-3 sm:mb-0 sm:mr-3">
+                <div className="flex items-center justify-center px-4 py-2 bg-gray-100 rounded-md text-gray-500 text-sm">
+                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                  Instance must be running to create alarms
+                </div>
+              </div>
+            )}
             <button
               type="button"
               className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
