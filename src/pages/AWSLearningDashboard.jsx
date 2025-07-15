@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { awsServices } from '../constants/awsServices';
 import ServiceCard from '../components/cards/ServiceCard';
+import { invokeAwsService } from '../utils/awsApi';
 
 const AWSLearningDashboard = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [showContent, setShowContent] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Get accountId and region from navigation state or localStorage
+  const customerId = location.state?.customerId || localStorage.getItem('aws_customer_id');
+  const selectedRegion = location.state?.selectedRegion || localStorage.getItem('aws_region');
 
   useEffect(() => {
     // Animate content on mount
@@ -19,8 +25,52 @@ const AWSLearningDashboard = () => {
     service.topics.some(topic => topic.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
-  const handleServiceClick = () => {
-    navigate('/aws-dashboard');
+  const handleServiceClick = async (serviceObj) => {
+    if (!customerId || !selectedRegion || !serviceObj?.id) {
+      console.warn('⛔ Required fields missing. Not invoking AWS service.', { customerId, selectedRegion, service: serviceObj?.id });
+      return;
+    }
+    // Use 'services-running' for the 'services' card, 'cloud-trail' for the 'cloudtrail' card, 'cloudwatch-trail' for the 'monitor-logs' card, otherwise use the id
+    let serviceValue = serviceObj.id;
+    if (serviceObj.id === 'services') serviceValue = 'services-running';
+    if (serviceObj.id === 'cloudtrail') serviceValue = 'cloud-trail';
+    if (serviceObj.id === 'monitor-logs') serviceValue = 'cloudwatch-trail';
+    const payload = {
+      aws_account_id: customerId?.trim(),
+      region: selectedRegion?.trim(),
+      service: serviceValue?.trim()
+    };
+    console.log('✅ Invoking AWS service with payload:', payload);
+    console.log('Final payload being sent:', JSON.stringify(payload));
+    try {
+      const result = await invokeAwsService(payload);
+      console.log('Lambda response:', result);
+      // Navigate to ServicesRunningPage if the service is 'services-running'
+      if (serviceValue === 'services-running') {
+        navigate('/services-running', { state: { lambdaResponse: result } });
+        return;
+      }
+      // Navigate to BillingPage if the service is 'billing'
+      if (serviceValue === 'billing') {
+        navigate('/billing', { state: { lambdaResponse: result } });
+        return;
+      }
+      // Navigate to CloudTrailPage if the service is 'cloud-trail'
+      if (serviceValue === 'cloud-trail') {
+        navigate('/cloudtrail', { state: { lambdaResponse: result } });
+        return;
+      }
+      // Navigate to CloudWatchTrailPage if the service is 'cloudwatch-trail'
+      if (serviceValue === 'cloudwatch-trail') {
+        navigate('/cloudwatch-trail', { state: { lambdaResponse: result } });
+        return;
+      }
+      // You can handle navigation or state update here based on result for other services
+    } catch (error) {
+      console.error('Error invoking AWS service:', error);
+    }
+    // Optionally, navigate to another page after
+    // navigate('/aws-dashboard');
   };
 
   const handleBack = () => {
@@ -103,7 +153,7 @@ const AWSLearningDashboard = () => {
                   }`}
                   style={{ transitionDelay: `${index * 100}ms` }}
                 >
-                  <ServiceCard service={service} onClick={handleServiceClick} showContent={showContent} index={index} />
+                  <ServiceCard service={service} onClick={() => handleServiceClick(service)} showContent={showContent} index={index} />
                 </div>
               ))}
             </div>

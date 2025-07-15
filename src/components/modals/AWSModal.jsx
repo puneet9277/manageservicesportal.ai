@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { invokeAwsService } from '../../utils/awsApi';
+// Remove react-select imports
+// import Select from 'react-select';
+// import 'react-select/dist/react-select.cjs.css';
+
+console.log('AWSModal component loaded');
 
 const AWSModal = ({ onClose }) => {
   const navigate = useNavigate();
@@ -21,11 +26,31 @@ const AWSModal = ({ onClose }) => {
     { id: 'us-east-2', name: 'US East (Ohio)', flag: '🇺🇸' },
     { id: 'us-west-1', name: 'US West (N. California)', flag: '🇺🇸' },
     { id: 'us-west-2', name: 'US West (Oregon)', flag: '🇺🇸' },
-    { id: 'eu-west-1', name: 'EU (Ireland)', flag: '🇮🇪' },
-    { id: 'eu-central-1', name: 'EU (Frankfurt)', flag: '🇩🇪' },
+    { id: 'af-south-1', name: 'Africa (Cape Town)', flag: '🇿🇦' },
+    { id: 'ap-east-1', name: 'Asia Pacific (Hong Kong)', flag: '🇭🇰' },
+    { id: 'ap-south-1', name: 'Asia Pacific (Mumbai)', flag: '🇮🇳' },
+    { id: 'ap-northeast-3', name: 'Asia Pacific (Osaka)', flag: '🇯🇵' },
+    { id: 'ap-northeast-2', name: 'Asia Pacific (Seoul)', flag: '🇰🇷' },
     { id: 'ap-southeast-1', name: 'Asia Pacific (Singapore)', flag: '🇸🇬' },
-    { id: 'ap-southeast-2', name: 'Asia Pacific (Sydney)', flag: '🇦🇺' }
+    { id: 'ap-southeast-2', name: 'Asia Pacific (Sydney)', flag: '🇦🇺' },
+    { id: 'ap-northeast-1', name: 'Asia Pacific (Tokyo)', flag: '🇯🇵' },
+    { id: 'ca-central-1', name: 'Canada (Central)', flag: '🇨🇦' },
+    { id: 'eu-central-1', name: 'EU (Frankfurt)', flag: '🇩🇪' },
+    { id: 'eu-west-1', name: 'EU (Ireland)', flag: '🇮🇪' },
+    { id: 'eu-west-2', name: 'EU (London)', flag: '🇬🇧' },
+    { id: 'eu-south-1', name: 'EU (Milan)', flag: '🇮🇹' },
+    { id: 'eu-west-3', name: 'EU (Paris)', flag: '🇫🇷' },
+    { id: 'eu-north-1', name: 'EU (Stockholm)', flag: '🇸🇪' },
+    { id: 'me-south-1', name: 'Middle East (Bahrain)', flag: '🇧🇭' },
+    { id: 'sa-east-1', name: 'South America (São Paulo)', flag: '🇧🇷' },
+    // Add more regions as AWS expands
   ];
+
+  // Prepare react-select options
+  // const regionOptions = regions.map(region => ({
+  //   value: region.id,
+  //   label: `${region.flag} ${region.name}`
+  // }));
 
   useEffect(() => {
     setTimeout(() => setShowContent(true), 100);
@@ -58,6 +83,7 @@ const AWSModal = ({ onClose }) => {
     }
   };
 
+  // Restore original handleRegionChange
   const handleRegionChange = (e) => {
     setSelectedRegion(e.target.value);
     setValidationStatus(prev => ({
@@ -69,33 +95,20 @@ const AWSModal = ({ onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (customerId.length === 12 && selectedRegion) {
-      setIsLoading(true);
-      setError('');
-      try {
-        // Call the main Lambda API
-        const response = await invokeAwsService({
-          accountId: customerId,
-          region: selectedRegion,
-          service: null // No service at this stage
-        });
-        if (response && !response.error) {
-          setShowContent(false);
-          setTimeout(() => {
-            onClose();
-            navigate('/aws-learning');
-          }, 300);
-        } else {
-          setError(response.error || 'Failed to log in. Please try again.');
-          setIsLoading(false);
-        }
-      } catch (error) {
-        setError('Failed to log in. Please try again.');
-        setIsLoading(false);
-      }
-    } else {
+    if (!customerId || !selectedRegion) {
+      console.warn('⛔ Required fields missing. Not proceeding.', { customerId, selectedRegion });
       setError('Please enter a valid 12-digit Customer ID and select a region');
+      return;
     }
+    // Save customerId and selectedRegion to state/context or pass to next page
+    setShowContent(false);
+    setTimeout(() => {
+      // Store values in localStorage for persistence
+      localStorage.setItem('aws_customer_id', customerId);
+      localStorage.setItem('aws_region', selectedRegion);
+      onClose();
+      navigate('/aws-learning');
+    }, 300);
   };
 
   const getInputBorderColor = (status) => {
