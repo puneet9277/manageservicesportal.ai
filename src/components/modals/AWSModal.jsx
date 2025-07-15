@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { invokeAwsService } from '../../utils/awsApi';
 
 const AWSModal = ({ onClose }) => {
   const navigate = useNavigate();
@@ -71,16 +72,23 @@ const AWSModal = ({ onClose }) => {
     if (customerId.length === 12 && selectedRegion) {
       setIsLoading(true);
       setError('');
-      
       try {
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        
-        setShowContent(false);
-        setTimeout(() => {
-          onClose();
-          navigate('/aws-learning');
-        }, 300);
+        // Call the main Lambda API
+        const response = await invokeAwsService({
+          accountId: customerId,
+          region: selectedRegion,
+          service: null // No service at this stage
+        });
+        if (response && !response.error) {
+          setShowContent(false);
+          setTimeout(() => {
+            onClose();
+            navigate('/aws-learning');
+          }, 300);
+        } else {
+          setError(response.error || 'Failed to log in. Please try again.');
+          setIsLoading(false);
+        }
       } catch (error) {
         setError('Failed to log in. Please try again.');
         setIsLoading(false);
