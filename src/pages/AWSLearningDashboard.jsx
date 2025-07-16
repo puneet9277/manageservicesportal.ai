@@ -10,6 +10,7 @@ const AWSLearningDashboard = () => {
   const location = useLocation();
   const [showContent, setShowContent] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [loading, setLoading] = useState(false);
 
   // Get accountId and region from navigation state or localStorage
   const customerId = location.state?.customerId || localStorage.getItem('aws_customer_id');
@@ -31,6 +32,7 @@ const AWSLearningDashboard = () => {
       console.warn('⛔ Required fields missing. Not invoking AWS service.', { customerId, selectedRegion, service: serviceObj?.id });
       return;
     }
+    setLoading(true);
     // Use 'services-running' for the 'services' card, 'cloud-trail' for the 'cloudtrail' card, 'cloudwatch-trail' for the 'monitor-logs' card, otherwise use the id
     let serviceValue = serviceObj.id;
     if (serviceObj.id === 'services') serviceValue = 'services-running';
@@ -70,6 +72,7 @@ const AWSLearningDashboard = () => {
     } catch (error) {
       console.error('Error invoking AWS service:', error);
     }
+    setLoading(false);
     // Optionally, navigate to another page after
     // navigate('/aws-dashboard');
   };
@@ -85,6 +88,19 @@ const AWSLearningDashboard = () => {
     <div className={`min-h-screen bg-gray-50 transition-opacity duration-300 ${showContent ? 'opacity-100' : 'opacity-0'}`}>
       {/* Animated background gradient */}
       <div className="fixed inset-0 bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-50 animate-gradient-shift"></div>
+
+      {/* Loading Overlay */}
+      {loading && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
+          <div className="flex flex-col items-center">
+            <svg className="animate-spin h-12 w-12 text-indigo-600 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+            </svg>
+            <span className="text-lg font-semibold text-indigo-700">Loading, please wait...</span>
+          </div>
+        </div>
+      )}
 
       {/* Content */}
       <div className="relative min-h-screen flex flex-col w-full">
@@ -126,7 +142,7 @@ const AWSLearningDashboard = () => {
           <div className="w-full mb-12 relative group">
             <input
               type="text"
-              placeholder="Search services, topics, or keywords..."
+              placeholder="Search services ..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full px-4 py-4 bg-white bg-opacity-90 rounded-xl shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300 transform group-hover:scale-[1.02]"
