@@ -1,12 +1,66 @@
-# React + Vite
+# Manage Services Portal (Workmates)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern cloud services portal for managing AWS resources, billing, and monitoring, built with React and Vite.
 
-Currently, two official plugins are available:
+## Features Implemented
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### 1. Modern AWS-Style UI/UX
+- Consistent dark/blue gradient backgrounds and branding.
+- Responsive, card-based layouts for all main pages.
+- Centered Workmates logo and professional headers.
 
-## Expanding the ESLint configuration
+### 2. Data Integration
+- Billing, Services Running, and CloudTrail pages connected to real backend Lambda responses.
+- Dynamic mapping of AWS resource fields (e.g., FunctionName, BucketName, etc.).
+- All available backend data surfaced in the UI, including modals for raw data.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### 3. Billing Dashboard
+- Expandable cards for Total Cost, Daily Breakdown, Service Breakdown, and Usage Type Breakdown.
+- Downloadable invoice PDFs (current and past).
+- Anomaly detection banner for unusual billing activity.
+- Scrollable, responsive tables for all breakdowns.
+- Professional, accessible charting:
+  - Daily cost trend (line chart)
+  - Cost by service (horizontal bar chart, with tooltips and no overlapping labels)
+
+### 4. Accessibility & Usability
+- Focus ring and keyboard navigation improvements.
+- Accessible, animated expandable cards.
+- All links open in new tabs where appropriate.
+
+### 5. General Improvements
+- UI/UX fixes: spacing, color consistency, logo sizing, and more.
+- All data visualizations use recharts for modern, interactive charts.
+- All available backend data is shown, with modals for full JSON details.
+
+---
+
+## Getting Started
+
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+2. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+---
+
+## Project Structure
+- `src/pages/` — Main pages (Billing, Services, CloudTrail, etc.)
+- `src/components/` — Reusable UI components
+- `src/constants/` — AWS resource/service constants
+- `src/utils/` — API helpers
+
+---
+
+## Next Steps
+- Add authentication and user management
+- Integrate more AWS services and dashboards
+- Further polish accessibility and mobile experience
+
+---
+
+*This project is a work in progress and demonstrates best practices for modern, data-rich cloud dashboards.*
