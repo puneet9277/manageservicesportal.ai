@@ -200,7 +200,7 @@ function ExpandableServiceCard({ service, expanded, onClick, tabIndex, onKeyDown
 
   return (
     <div
-      className={`bg-white rounded-lg shadow border transition-all duration-300 cursor-pointer focus:ring-2 focus:ring-indigo-500 outline-none ${expanded ? 'scale-[1.02] shadow-lg border-indigo-300' : 'hover:scale-[1.01] hover:shadow-md'}`}
+      className={`bg-white rounded-lg shadow border transition-all duration-300 cursor-pointer focus-visible:ring-2 focus-visible:ring-purple-500 focus:outline-none focus-visible:z-10 ${expanded ? 'scale-[1.02] shadow-lg border-indigo-300' : 'hover:scale-[1.01] hover:shadow-md'}`}
       tabIndex={tabIndex}
       onClick={onClick}
       onKeyDown={onKeyDown}
