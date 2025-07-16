@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import servletLogo from '../assets/servlet.png';
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -10,14 +11,6 @@ const LoginForm = () => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showWelcome, setShowWelcome] = useState(true);
-
-  useEffect(() => {
-    // Animate welcome message
-    const timer = setTimeout(() => {
-      setShowWelcome(false);
-    }, 500);
-    return () => clearTimeout(timer);
-  }, []);
 
   const handleChange = (e) => {
     setFormData({
@@ -58,14 +51,12 @@ const LoginForm = () => {
         </div>
 
         <div className="max-w-md w-full space-y-8 relative">
-          <div className={`transition-all duration-700 transform ${showWelcome ? 'translate-y-0 opacity-100' : '-translate-y-4 opacity-0'}`}>
-            <h2 className="mt-6 text-center text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight">
-              Welcome Back
-            </h2>
-            <p className="mt-2 text-center text-sm text-gray-600">
-              Access your cloud infrastructure monitoring dashboard
-            </p>
-          </div>
+          <h2 className="mt-6 mb-2 text-center text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight">
+            Welcome Back
+          </h2>
+          <p className="mb-4 text-center text-sm text-gray-600">
+            Access your cloud infrastructure monitoring dashboard
+          </p>
 
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
             <div className="rounded-md shadow-sm -space-y-px">
@@ -166,9 +157,12 @@ const LoginForm = () => {
         <div className="absolute inset-0 bg-gradient-to-br from-indigo-50 via-white to-purple-50"></div>
         <div className="relative z-10 flex flex-col items-center max-w-3xl px-8 w-full">
           <img
-            src="/workmates-logo.svg"
-            alt="Workmates"
-            className="w-full max-w-2xl mb-16 transform hover:scale-105 transition-transform duration-300 filter drop-shadow-xl"
+            src={servletLogo}
+            alt="Servlet Logo"
+            width={250}
+            height={75}
+            className="w-full max-w-xs mb-16 filter drop-shadow-xl object-contain"
+            style={{ imageRendering: 'crisp-edges', WebkitImageRendering: '-webkit-optimize-contrast', maxWidth: '100%' }}
           />
           <div className="space-y-6 text-center mt-4">
             <h3 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">

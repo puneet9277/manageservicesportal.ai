@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { awsServices } from '../constants/awsServices';
 import ServiceCard from '../components/cards/ServiceCard';
 import { invokeAwsService } from '../utils/awsApi';
+import servletLogo from '../assets/servlet.png';
 
 const AWSLearningDashboard = () => {
   const navigate = useNavigate();
@@ -86,16 +87,16 @@ const AWSLearningDashboard = () => {
       <div className="fixed inset-0 bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-50 animate-gradient-shift"></div>
 
       {/* Content */}
-      <div className="relative min-h-screen flex flex-col">
+      <div className="relative min-h-screen flex flex-col w-full">
         {/* Top Bar with Logo and Navigation */}
         <div className="bg-white bg-opacity-90 shadow-sm backdrop-blur-sm w-full">
-          <div className="w-full px-8">
+          <div className="w-full px-2">
             <div className="h-20 flex items-center justify-between relative">
               {/* Company Logo */}
               <div className="transform transition-transform duration-300 hover:scale-110">
                 <img
-                  src="/workmates-logo.svg"
-                  alt="Cloud Workmates"
+                  src={servletLogo}
+                  alt="Servlet Logo"
                   className="h-12 w-auto filter drop-shadow-lg"
                 />
               </div>
@@ -120,15 +121,15 @@ const AWSLearningDashboard = () => {
         </div>
 
         {/* Main Content */}
-        <div className="flex-grow w-full px-2 sm:px-4 md:px-8 py-4 sm:py-8 md:py-12">
+        <div className="flex-grow w-full p-2">
           {/* Search Bar */}
-          <div className="max-w-2xl mx-auto mb-12 relative group">
+          <div className="w-full mb-12 relative group">
             <input
               type="text"
               placeholder="Search services, topics, or keywords..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-6 py-4 bg-white bg-opacity-90 rounded-xl shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300 transform group-hover:scale-[1.02]"
+              className="w-full px-4 py-4 bg-white bg-opacity-90 rounded-xl shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300 transform group-hover:scale-[1.02]"
             />
             <svg
               className="absolute right-4 top-1/2 transform -translate-y-1/2 w-6 h-6 text-gray-400"
@@ -141,8 +142,8 @@ const AWSLearningDashboard = () => {
           </div>
 
           {/* Services Grid */}
-          <div className="max-w-[1600px] mx-auto">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="w-full">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
               {filteredServices.map((service, index) => (
                 <div
                   key={service.id}

@@ -187,9 +187,7 @@ const Dashboard = () => {
         </svg>
         <div className="absolute flex flex-col items-center justify-center">
           <span className="text-base font-medium text-gray-500 mb-2">{title}</span>
-          <span className={`text-3xl font-bold transition-all duration-300 ${isLoading ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
-            {value}
-          </span>
+          <span className={`text-3xl font-bold transition-all duration-300 ${isLoading ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>{value}</span>
         </div>
       </div>
       {/* Hover tooltip */}

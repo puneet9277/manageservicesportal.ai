@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { awsInstances } from '../constants/awsInstances';
 import InstanceCard from '../components/cards/InstanceCard';
+import servletLogo from '../assets/servlet.png';
 
 const AWSInstancePage = () => {
   const navigate = useNavigate();
@@ -78,8 +79,8 @@ const AWSInstancePage = () => {
               {/* Company Logo */}
               <div className="transform transition-transform duration-300 hover:scale-110">
                 <img
-                  src="/workmates-logo.svg"
-                  alt="Cloud Workmates"
+                  src={servletLogo}
+                  alt="Servlet Logo"
                   className="h-12 w-auto filter drop-shadow-lg"
                 />
               </div>
@@ -107,10 +108,10 @@ const AWSInstancePage = () => {
         </div>
 
         {/* Main Content */}
-        <div className="flex-grow w-full px-4 sm:px-6 lg:px-8 py-8">
-          <div className="max-w-[1600px] mx-auto space-y-6">
+        <div className="flex-grow w-full p-2">
+          <div className="w-full max-w-full space-y-6">
             {/* Statistics */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
               <StatCard
                 title="Total Instances"
                 value={stats.total}

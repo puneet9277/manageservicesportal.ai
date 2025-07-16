@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import servletLogo from '../assets/servlet.png';
 
 const CreateAlarmForm = () => {
   const navigate = useNavigate();
@@ -69,8 +70,8 @@ const CreateAlarmForm = () => {
               {/* Company Logo */}
               <div className="transform transition-transform duration-300 hover:scale-110">
                 <img
-                  src="/workmates-logo.svg"
-                  alt="Cloud Workmates"
+                  src={servletLogo}
+                  alt="Servlet Logo"
                   className="h-12 w-auto filter drop-shadow-lg"
                 />
               </div>
