@@ -5,7 +5,7 @@ import {
   Tooltip, Legend, ResponsiveContainer,
   PieChart, Pie, Cell, BarChart, Bar, LabelList
 } from 'recharts';
-import { FaChevronDown, FaChevronUp, FaArrowLeft } from 'react-icons/fa';
+import { FaChevronDown, FaChevronUp, FaArrowLeft, FaFilePdf, FaExclamationTriangle, FaInfoCircle } from 'react-icons/fa';
 import Modal from '../components/modals/Modal';
 
 const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#d0ed57', '#a4de6c', '#d0ed57', '#8dd1e1', '#d88884'];
@@ -196,6 +196,77 @@ const BillingPage = () => {
             />
           </div>
         </div>
+        {/* Summary Hero Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 px-6">
+          {/* Total Cost Card */}
+          <div className="bg-white rounded-lg shadow p-4 flex flex-col items-start border border-indigo-100">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="font-bold text-gray-700">Total Cost</span>
+              <FaInfoCircle className="text-gray-400" title="Total AWS spend to date for this billing period." />
+            </div>
+            <span className="text-3xl font-black text-indigo-700">${totalCost.toLocaleString()}</span>
+            <div className="w-full mt-2">
+              <div className="flex justify-between text-xs text-gray-500">
+                <span>Actual</span>
+                <span>Forecast</span>
+              </div>
+              <div className="w-full h-2 bg-gray-200 rounded-full mt-1 relative">
+                <div
+                  className="h-2 bg-purple-500 rounded-full transition-all"
+                  style={{ width: `${Math.min((totalCost / (projectedCost || 1)) * 100, 100)}%` }}
+                />
+              </div>
+              <div className="flex justify-between text-xs mt-1">
+                <span className="text-indigo-700 font-semibold">${totalCost.toLocaleString()}</span>
+                <span className="text-purple-700 font-semibold">${projectedCost.toLocaleString()}</span>
+              </div>
+            </div>
+          </div>
+          {/* Projected Cost Card */}
+          <div className="bg-white rounded-lg shadow p-4 flex flex-col items-start border border-indigo-100">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="font-bold text-gray-700">Projected Cost</span>
+              <FaInfoCircle className="text-gray-400" title="Estimated total AWS spend for the full month." />
+            </div>
+            <span className="text-3xl font-black text-purple-700">${projectedCost.toLocaleString()}</span>
+            <span className="text-xs text-gray-500 mt-2">Based on current usage trends</span>
+          </div>
+          {/* Anomaly Status Card */}
+          <div className={`rounded-lg shadow p-4 flex flex-col items-start border ${anomalyDetected ? 'bg-red-50 border-red-300' : 'bg-green-50 border-green-200'}`}> 
+            <div className="flex items-center gap-2 mb-2">
+              <span className="font-bold text-gray-700">Anomaly Status</span>
+              <FaInfoCircle className="text-gray-400" title="AWS cost anomaly detection status." />
+            </div>
+            <div className="flex items-center gap-2">
+              {anomalyDetected ? (
+                <>
+                  <FaExclamationTriangle className="text-red-500" title="Anomaly Detected" />
+                  <span className="text-red-700 font-bold">Detected</span>
+                </>
+              ) : (
+                <span className="text-green-700 font-bold">Normal</span>
+              )}
+            </div>
+            {anomalyDetected && <span className="text-xs text-red-500 mt-2">Unusual billing activity detected</span>}
+          </div>
+          {/* Invoice Download Card */}
+          <div className="bg-white rounded-lg shadow p-4 flex flex-col items-start border border-indigo-100">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="font-bold text-gray-700">Invoices</span>
+              <FaInfoCircle className="text-gray-400" title="Download your AWS billing invoices as PDF." />
+            </div>
+            {billingPdfUrl && (
+              <a href={billingPdfUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 bg-indigo-600 text-white px-3 py-1.5 rounded shadow hover:bg-indigo-700 font-semibold transition text-sm mb-2">
+                <FaFilePdf className="text-white" /> Current Invoice
+              </a>
+            )}
+            {pastInvoices.map((inv, idx) => (
+              <a key={inv.url} href={inv.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 bg-gray-200 text-indigo-700 px-3 py-1.5 rounded shadow hover:bg-indigo-100 font-semibold transition text-sm mb-1">
+                <FaFilePdf className="text-indigo-700" /> {inv.month} Invoice
+              </a>
+            ))}
+          </div>
+        </div>
         {/* Billing Cards Vertical Stack */}
         <div className="flex flex-col gap-6 px-6">
           {BILLING_CARDS.map((card, idx) => (
@@ -369,6 +440,18 @@ function ExpandableBillingCard({ card, expanded, onClick, tabIndex, onKeyDown, d
                         ))}
                       </tbody>
                     </table>
+                  </div>
+                )}
+                {serviceData.length > 0 && (
+                  <div className="mb-4">
+                    <div className="font-semibold text-sm text-gray-700 flex items-center gap-1">
+                      <FaInfoCircle className="text-gray-400" title="Top 3 services by spend." /> Top 3 Services
+                    </div>
+                    <ul className="mt-1 ml-1 list-disc list-inside text-xs text-indigo-800">
+                      {serviceData.slice(0, 3).map((row, i) => (
+                        <li key={row.name} className="font-bold">{row.name} <span className="text-indigo-600 font-normal">${row.value}</span></li>
+                      ))}
+                    </ul>
                   </div>
                 )}
                 <button
